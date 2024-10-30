@@ -23,7 +23,41 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => 'password',
             'role' => 'administrador',
+        ]);
 
+        \App\Models\User::factory()->create([
+            'name' => 'Julia',
+            'email' => 'julia@example.com',
+            'password' => 'password',
+            'role' => 'administrador',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Jose',
+            'email' => 'jose@example.com',
+            'password' => 'password',
+            'role' => 'soporte',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Lucia',
+            'email' => 'lucia@example.com',
+            'password' => 'password',
+            'role' => 'soporte',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Lierni',
+            'email' => 'lierni@example.com',
+            'password' => 'password',
+            'role' => 'soporte',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Maider',
+            'email' => 'maider@example.com',
+            'password' => 'password',
+            'role' => 'soporte',
         ]);
 
 
