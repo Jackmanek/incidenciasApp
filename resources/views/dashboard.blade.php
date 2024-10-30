@@ -1,9 +1,4 @@
 @extends('layouts.app')
 @section('content')
-    <div>
-        <h2>Perfil Administrado</h2>
-    </div>
-    <div>
-
-    </div>
+    @livewire('gestion-incidencias')
 @endsection

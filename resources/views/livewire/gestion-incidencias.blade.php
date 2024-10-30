@@ -1,4 +1,4 @@
-<div  class="w-full m-auto mb-4">
+<div x-data="{ isModalOpen: false }"  class="w-full m-auto mb-4">
     <div class="w-full max-w-xs m-auto">
         <h2 class="rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">Gestor de Incidencias</h2>
 
@@ -11,11 +11,11 @@
     <form wire:submit.prevent="{{ $incidenciaId ? 'update' : 'store' }}" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Título</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" wire:model="title" required>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" wire:model="title" required >
         </div>
         <div class="mb-4">
             <label>Descripción</label>
-            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" wire:model="descripcion" required></textarea>
+            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" wire:model="descripcion" required ></textarea>
         </div>
         <div class="mb-4  relative">
             <label >Estado</label>
@@ -25,15 +25,20 @@
                 <option value="Done">Done</option>
             </select>
         </div>
+        @if (Auth::user()->role === 'administrador')
         <div class="mb-4 relative">
-            <label>Asignado a</label>
+            <label>Asignar a</label>
             <select class="block appearance-none w-full bg-white-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white" wire:model="asignado">
                 <option value="">Seleccione un usuario</option>
                 @foreach(\App\Models\User::all() as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @if ($user->role === "soporte")
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endif
+
                 @endforeach
             </select>
         </div>
+        @endif
         <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">{{ $incidenciaId ? 'Actualizar' : 'Crear' }}</button>
         @if($incidenciaId)
             <button class="shadow bg-purple-500 hover:bg-red-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button" wire:click="resetFields">Cancelar</button>
@@ -58,10 +63,10 @@
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->title }}</td>
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->descripcion }}</td>
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->estado }}</td>
-                        <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->asignado->name ?? 'No asignado' }}</td>
+                        <td class="p-4 border-b border-blue-gray-50">{{ \App\Models\User::find($incidencia->asignado)->name ?? 'No asignado' }}</td>
                         <td class="p-4 border-b border-blue-gray-50">
                             <button class="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button" wire:click="edit({{ $incidencia->id }})">
+                            @click="isModalOpen = true; @this.edit({{ $incidencia->id }})">
                                 <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
                                       class="w-4 h-4">
@@ -85,5 +90,38 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
+
+    <div x-show="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-lg max-w-md mx-auto">
+            <h2 class="text-xl font-semibold mb-4">Editar Incidencia</h2>
+            @if (Auth::user()->role === 'soporte')
+                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->title}}" readonly />
+                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->descripcion}}" readonly></textarea>
+            @else
+                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->title}}" />
+                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->descripcion}}"></textarea>
+            @endif
+
+            <select wire:model="estado" class="w-full px-4 py-2 border rounded mb-4">
+                <option value="To Do">To Do</option>
+                <option value="Doing">Doing</option>
+                <option value="Done">Done</option>
+            </select>
+            @if (Auth::user()->role === 'administrador')
+                <select wire:model="asignado" class="w-full px-4 py-2 border rounded mb-4">
+                    <option value="">Seleccione un usuario</option>
+                    @foreach(\App\Models\User::all() as $user)
+                        @if($user->role === "soporte")
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            @endif
+            <div class="flex justify-end">
+                <button @click="isModalOpen = false" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2">Cancelar</button>
+                <button wire:click="update" @click="isModalOpen = false" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded">Guardar</button>
+            </div>
+        </div>
     </div>
 </div>
