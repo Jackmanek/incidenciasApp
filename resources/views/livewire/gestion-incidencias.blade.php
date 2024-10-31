@@ -1,5 +1,6 @@
 <div x-data="{ isModalOpen: false }"  class="w-full m-auto mb-4">
-    <div class="w-full max-w-xs m-auto">
+
+    <div class="w-full max-w-xs m-auto" x-show="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <h2 class="rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">Gestor de Incidencias</h2>
 
     @if (session()->has('message'))
@@ -45,8 +46,15 @@
         @endif
     </form>
     </div>
-    <div class="relative flex flex-col w-2/3 h-full  text-gray-700 bg-white shadow-md rounded-xl bg-clip-border m-auto">
-        <h3 class="rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">Listado de Incidencias</h3>
+
+
+
+    <div class="relative flex flex-col w-5/6 h-full  text-gray-700 bg-white shadow-md rounded-xl bg-clip-border m-auto">
+        <div class=" flex justify-center rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">
+            <h3 class="mr-3">Listado de Incidencias</h3>
+            <button class="relative h-10 max-h-[40px] w-100 max-w-[120px] py-2 px-2 select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-green-900 transition-all hover:bg-blue-900/10 active:bg-blue-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            @click="isModalOpen = true; @this.store()">Nueva Incidencia</button>
+        </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-s text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
