@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Incidencia;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -14,16 +15,23 @@ class GestionIncidencias extends Component
     public $title;
     public $descripcion;
     public $estado = 'To Do';
-    public $asignado;
+    public $asignado = "";
     public $incidenciaId;
+    public $isCreating = false;
+    public $changeStatus = false;
+    public $asignarInci = false;
+    public $soporteId;
+    public $asignaSoporte = false;
+    public $listaSoporte;
 
 
     public function mount(){
         $user = Auth::user();
         if($user->role === 'soporte'){
             $this->incidencias = Incidencia::where('asignado', $user->id)->get();
-        }else{
+        }elseif($user->role === 'administrador'){
             $this->incidencias = Incidencia::all();
+            $this->listaSoporte = User::where('role', 'soporte')->get();
         }
 
     }
@@ -39,6 +47,23 @@ class GestionIncidencias extends Component
         $this->estado = 'To Do';
         $this->asignado = null;
         $this->incidenciaId = null;
+    }
+
+    public function createNewIncidencia(){
+        $this->resetFields();
+        $this->isCreating = true;
+    }
+    public function cambioEstado($id){
+        $this->incidenciaId = $id;
+        $incidencia = Incidencia::findOrFail($id);
+        $this->estado = $incidencia->estado;
+        $this->changeStatus = true;
+    }
+    public function asignarIncidencia($id){
+
+        $this->incidenciaId = $id;
+        $this->asignaSoporte = true;
+
     }
 
     public function store(){
@@ -68,11 +93,13 @@ class GestionIncidencias extends Component
             ]);
         }
 
-
+        $user = Auth::user();
+        if($user->role === 'soporte'){
+            $this->incidencias = Incidencia::where('asignado', $user->id)->get();
+        }elseif($user->role === 'administrador'){
+            $this->incidencias = Incidencia::all();
+        }
         session()->flash('message', 'Incidencia creada exitosamente.');
-
-
-        $this->incidencias = Incidencia::all();
         $this->resetFields();
     }
 
@@ -107,29 +134,48 @@ class GestionIncidencias extends Component
         session()->flash('message', 'Incidencia actualizada exitosamente.');
 
         $this->resetFields();
-        $this->incidencias = Incidencia::all();
+        $user = Auth::user();
+        if($user->role === 'soporte'){
+            $this->incidencias = Incidencia::where('asignado', $user->id)->get();
+        }elseif($user->role === 'administrador'){
+            $this->incidencias = Incidencia::all();
+        }
     }
 
     public function delete($id){
+
         Incidencia::findOrFail($id)->delete();
-
         session()->flash('message', 'Incidencia eliminada exitosamente.');
-
-        $this->incidencias = Incidencia::all();
-    }
-    public function updateStatus($id, $estado){
         $user = Auth::user();
-        $incidencia = Incidencia::findOrFail($id);
-
-        if ($user->role === 'soporte' && $incidencia->asignado !== $user->id) {
-            abort(403, 'No tienes permiso para actualizar esta incidencia');
+        if($user->role === 'soporte'){
+            $this->incidencias = Incidencia::where('asignado', $user->id)->get();
+        }elseif($user->role === 'administrador'){
+            $this->incidencias = Incidencia::all();
         }
+    }
 
-        $incidencia->update([
-            'estado' => $estado,
-        ]);
+    public function actualizaEstado(){
+
+        $incidencia = Incidencia::findOrFail($this->incidenciaId);
+        $incidencia->update(['estado' => $this->estado]);
 
         session()->flash('message', 'Estado de la incidencia actualizado');
+        $this->changeStatus = false;
         $this->mount();
+    }
+
+    public function asignarSoporte(){
+
+        $incidencia = Incidencia::findOrFail($this->incidenciaId);
+        $incidencia->asignado_a()->associate($this->asignado);
+        $incidencia->save();
+        session()->flash('message', 'Soporte asignado exitosamente.');
+        $user = Auth::user();
+        if ($user->role === 'soporte') {
+            $this->incidencias = Incidencia::where('asignado', $user->id)->get();
+        } elseif ($user->role === 'administrador') {
+            $this->incidencias = Incidencia::all();
+        }
+        $this->resetFields();
     }
 }

@@ -1,3 +1,49 @@
+<div class="relative flex justify-around sm:items-center h-20 bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
+    <div>
+        <h1>Gestor de Incidencias</h1>
+    </div>
+    @if (Route::has('login'))
+        <div class="flex justify-end sm:top-0 sm:right-0 p-6 text-right z-10">
+            @auth
+                <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full uppercase ">
+                    {{ Auth::user()->name }}</button>
+                </a>
+
+                <div class="border-gray-200">
+                    <div class="px-4">
+                        <div class="font-medium text-base text-gray-800 uppercase"></div>
+                    </div>
+                    <div class="space-y-1">
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+
+                            <a href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                <button class="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full uppercase ">Salir</button>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+                <div class="felx content-end px-4">
+                    <h6>{{ Auth::user()->role }}</h6>
+                </div>
+
+            @else
+                <a href="/" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Iniciar sesion</a>
+
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Registrar</a>
+                @endif
+            @endauth
+        </div>
+
+    @endif
+</div>
+<div class="w-2/3 m-auto">
+    <h1 class="rounded bg-slate-100 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-white">Gestor WEB de Incidencia</h1>
+</div>
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf

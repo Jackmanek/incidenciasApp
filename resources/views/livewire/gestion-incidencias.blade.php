@@ -1,59 +1,11 @@
-<div x-data="{ isModalOpen: false }"  class="w-full m-auto mb-4">
-
-    <div class="w-full max-w-xs m-auto" x-show="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <h2 class="rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">Gestor de Incidencias</h2>
-
-    @if (session()->has('message'))
-        <div class="alert alert-success">
-            {{ session('message') }}
-        </div>
-    @endif
-
-    <form wire:submit.prevent="{{ $incidenciaId ? 'update' : 'store' }}" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Título</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" wire:model="title" required >
-        </div>
-        <div class="mb-4">
-            <label>Descripción</label>
-            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" wire:model="descripcion" required ></textarea>
-        </div>
-        <div class="mb-4  relative">
-            <label >Estado</label>
-            <select class="block appearance-none w-full bg-white-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white" wire:model="estado" required>
-                <option value="To Do">To Do</option>
-                <option value="Doing">Doing</option>
-                <option value="Done">Done</option>
-            </select>
-        </div>
-        @if (Auth::user()->role === 'administrador')
-        <div class="mb-4 relative">
-            <label>Asignar a</label>
-            <select class="block appearance-none w-full bg-white-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white" wire:model="asignado">
-                <option value="">Seleccione un usuario</option>
-                @foreach(\App\Models\User::all() as $user)
-                    @if ($user->role === "soporte")
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                    @endif
-
-                @endforeach
-            </select>
-        </div>
-        @endif
-        <button class="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">{{ $incidenciaId ? 'Actualizar' : 'Crear' }}</button>
-        @if($incidenciaId)
-            <button class="shadow bg-purple-500 hover:bg-red-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button" wire:click="resetFields">Cancelar</button>
-        @endif
-    </form>
-    </div>
-
-
-
+<div x-data="{ isCreateModalOpen: false, isModalOpen: false, changeSatusModal: false, asignaModal: false }"  class="w-full m-auto mb-4">
     <div class="relative flex flex-col w-5/6 h-full  text-gray-700 bg-white shadow-md rounded-xl bg-clip-border m-auto">
         <div class=" flex justify-center rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">
             <h3 class="mr-3">Listado de Incidencias</h3>
-            <button class="relative h-10 max-h-[40px] w-100 max-w-[120px] py-2 px-2 select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-green-900 transition-all hover:bg-blue-900/10 active:bg-blue-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            @click="isModalOpen = true; @this.store()">Nueva Incidencia</button>
+
+            <button class="mt-2 bg-black text-white relative h-10 max-h-[40px] w-100 max-w-[150px] py-3 px-3 select-none rounded-lg text-center align-middle  text-xs  uppercase transition-all hover:bg-green-700"
+            @click="isCreateModalOpen = true; @this.createNewIncidencia()">Nueva Incidencia</button>
+
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-s text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -70,8 +22,17 @@
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->title }}</td>
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->descripcion }}</td>
-                        <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->estado }}</td>
-                        <td class="p-4 border-b border-blue-gray-50">{{ \App\Models\User::find($incidencia->asignado)->name ?? 'No asignado' }}</td>
+                        <td class="p-4 border-b border-blue-gray-50"><button class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                            @click="changeSatusModal = true; @this.cambioEstado({{ $incidencia->id }})">{{ $incidencia->estado }}</button></td>
+                        <td class="p-4 border-b border-blue-gray-50">
+                            @if (Auth::user()->role === 'administrador')
+                                <button class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                @click="asignaModal = true; @this.asignarIncidencia({{ $incidencia->id }})">{{ $incidencia->asignado_a->name ?? 'No asignado' }}</button>
+                            @else
+                                {{ $incidencia->asignado_a->name ?? 'No asignado' }}
+                            @endif
+
+                        </td>
                         <td class="p-4 border-b border-blue-gray-50">
                             <button class="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                             @click="isModalOpen = true; @this.edit({{ $incidencia->id }})">
@@ -104,11 +65,14 @@
         <div class="bg-white p-6 rounded shadow-lg max-w-md mx-auto">
             <h2 class="text-xl font-semibold mb-4">Editar Incidencia</h2>
             @if (Auth::user()->role === 'soporte')
-                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->title}}" readonly />
-                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->descripcion}}" readonly></textarea>
+                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4"  readonly />
+                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4"  readonly></textarea>
+            @elseif (Auth::user()->role === 'administrador')
+                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4"  />
+                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" ></textarea>
             @else
-                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->title}}" />
-                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" placeholder="{{$incidencia->descripcion}}"></textarea>
+                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" />
+                <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4"></textarea>
             @endif
 
             <select wire:model="estado" class="w-full px-4 py-2 border rounded mb-4">
@@ -132,4 +96,63 @@
             </div>
         </div>
     </div>
+
+    <div x-show="isCreateModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-lg max-w-md mx-auto">
+            <h2 class="text-xl font-semibold mb-4">Nueva Incidencia</h2>
+            <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" placeholder="Title" />
+            <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" placeholder="Descripción"></textarea>
+            <select wire:model="estado" class="w-full px-4 py-2 border rounded mb-4">
+                <option value="To Do">To Do</option>
+                <option value="Doing">Doing</option>
+                <option value="Done">Done</option>
+            </select>
+            @if (Auth::user()->role === 'administrador')
+                <select wire:model="asignado" class="w-full px-4 py-2 border rounded mb-4">
+                    <option value="">Seleccione un usuario</option>
+                    @foreach(\App\Models\User::all() as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            @endif
+            <div class="flex justify-end">
+                <button @click="isCreateModalOpen = false" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2">Cancelar</button>
+                <button wire:click="store" @click="isCreateModalOpen = false" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded">Crear</button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="changeSatusModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-lg max-w-md mx-auto">
+            <h2 class="text-xl font-semibold mb-4">Cambiar estado</h2>
+            <select wire:model="estado" class="w-full px-4 py-2 border rounded mb-4">
+                <option value="To Do">To Do</option>
+                <option value="Doing">Doing</option>
+                <option value="Done">Done</option>
+            </select>
+            <div class="flex justify-end">
+                <button @click="changeSatusModal = false" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2">Cancelar</button>
+                <button wire:click="actualizaEstado" @click="changeSatusModal = false" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="asignaModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-lg max-w-md mx-auto">
+            <h2 class="text-xl font-semibold mb-4">Asigna a Soporte</h2>
+            @if (Auth::user()->role === 'administrador')
+                <select wire:model="asignado" class="w-full px-4 py-2 border rounded mb-4">
+                    @foreach(\App\Models\User::all() as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            @endif
+            <div class="flex justify-end">
+                <button @click="asignaModal = false" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2">Cancelar</button>
+                <button wire:click="asignarSoporte" @click="asignaModal = false" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+
 </div>
