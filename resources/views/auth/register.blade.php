@@ -1,6 +1,6 @@
 <div class="relative flex justify-around sm:items-center h-20 bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
     <div>
-        <h1>Gestor de Incidencias</h1>
+        <h1 class="mb-4 text-2xl font-extrabold text-gray-900 dark:text-white md:text-2xl lg:text-3xl">Gestor <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Web</span> de Incidencias</h1>
     </div>
     @if (Route::has('login'))
         <div class="flex justify-end sm:top-0 sm:right-0 p-6 text-right z-10">
@@ -42,7 +42,7 @@
     @endif
 </div>
 <div class="w-2/3 m-auto">
-    <h1 class="rounded bg-slate-100 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-white">Gestor WEB de Incidencia</h1>
+    <h1 class="rounded bg-slate-100 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-white">Gestor <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Web</span> de Incidencia</h1>
 </div>
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
@@ -87,11 +87,11 @@
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+                {{ __(' ') }}
             </a>
 
             <x-primary-button class="ms-4">
-                {{ __('Register') }}
+                {{ __('Registrar') }}
             </x-primary-button>
         </div>
     </form>

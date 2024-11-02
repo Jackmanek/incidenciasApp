@@ -142,6 +142,7 @@
             <h2 class="text-xl font-semibold mb-4">Asigna a Soporte</h2>
             @if (Auth::user()->role === 'administrador')
                 <select wire:model="asignado" class="w-full px-4 py-2 border rounded mb-4">
+                    <option value="no_asignado">No Asignado</option>
                     @foreach(\App\Models\User::all() as $user)
                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach

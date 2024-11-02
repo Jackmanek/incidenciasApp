@@ -3,7 +3,7 @@
 
     <div class="w-full">
         <div class="w-2/3 m-auto">
-            <h1 class="rounded bg-slate-100 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-white">Gestor WEB de Incidencia</h1>
+            <h1 class="rounded bg-slate-100 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-white">Gestor <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Web</span> de Incidencia</h1>
         </div>
         <x-guest-layout>
             <!-- Session Status -->
@@ -42,12 +42,12 @@
                 <div class="flex items-center justify-end mt-4">
                     @if (Route::has('password.request'))
                         <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                            {{ __('Forgot your password?') }}
+                            {{ __(' ') }}
                         </a>
                     @endif
 
                     <x-primary-button class="ms-3">
-                        {{ __('Log in') }}
+                        {{ __('Entrar') }}
                     </x-primary-button>
                 </div>
             </form>

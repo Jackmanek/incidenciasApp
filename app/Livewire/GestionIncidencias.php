@@ -20,7 +20,6 @@ class GestionIncidencias extends Component
     public $isCreating = false;
     public $changeStatus = false;
     public $asignarInci = false;
-    public $soporteId;
     public $asignaSoporte = false;
     public $listaSoporte;
 
@@ -76,20 +75,18 @@ class GestionIncidencias extends Component
         ]);
 
         if($user->role === 'soporte'){
-            Incidencia::create([
+            $user->creador()->create([
             'title' => $this->title,
             'descripcion' => $this->descripcion,
             'estado' => $this->estado,
-            'asignado' => auth()->id(),
-            'creado' => auth()->id(),
+            'asignado' => $user->id,
         ]);
         }else{
-            Incidencia::create([
+            $user->creador()->create([
                 'title' => $this->title,
                 'descripcion' => $this->descripcion,
                 'estado' => $this->estado,
                 'asignado' => $this->asignado,
-                'creado' => auth()->id(),
             ]);
         }
 
@@ -165,9 +162,15 @@ class GestionIncidencias extends Component
     }
 
     public function asignarSoporte(){
-
         $incidencia = Incidencia::findOrFail($this->incidenciaId);
-        $incidencia->asignado_a()->associate($this->asignado);
+
+
+        if($this->asignado === 'no_asignado'){
+            $incidencia->asignado_a()->dissociate();
+        }else{
+            $incidencia->asignado_a()->associate($this->asignado);
+        }
+
         $incidencia->save();
         session()->flash('message', 'Soporte asignado exitosamente.');
         $user = Auth::user();
