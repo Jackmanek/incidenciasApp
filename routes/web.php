@@ -15,7 +15,11 @@ use Livewire\Livewire;
 */
 
 Livewire::component('gestion-incidencias', \App\Livewire\GestionIncidencias::class);
-
+/*
+Route::get('/', function () {
+    return view('welcome');
+})->name('gestion-incidencias');
+*/
 Route::get('/', function () {
     return view('welcome');
 });

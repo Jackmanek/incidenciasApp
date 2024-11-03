@@ -10,13 +10,14 @@ class IncidenciaApiController extends Controller
 {
     public function listIncidencias(Request $request)
     {
-        // Obtiene el estado a filtrar de la consulta
+
         $estado = $request->query('estado');
 
-        // Obtiene el usuario autenticado
         $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        // Filtrado según el rol del usuario
         if ($user->role === 'administrador') {
             $incidencias = Incidencia::when($estado, function ($query) use ($estado) {
                 return $query->where('estado', $estado);
@@ -30,7 +31,6 @@ class IncidenciaApiController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // Retorna la colección de incidencias
         return response()->json($incidencias);
     }
 }

@@ -9,8 +9,6 @@ use Livewire\Component;
 
 class GestionIncidencias extends Component
 {
-
-
     public $incidencias;
     public $title;
     public $descripcion;
@@ -21,6 +19,7 @@ class GestionIncidencias extends Component
     public $changeStatus = false;
     public $asignarInci = false;
     public $asignaSoporte = false;
+    public $isModalOpen = true;
     public $listaSoporte;
 
 
@@ -52,17 +51,17 @@ class GestionIncidencias extends Component
         $this->resetFields();
         $this->isCreating = true;
     }
+
     public function cambioEstado($id){
         $this->incidenciaId = $id;
         $incidencia = Incidencia::findOrFail($id);
         $this->estado = $incidencia->estado;
         $this->changeStatus = true;
     }
-    public function asignarIncidencia($id){
 
+    public function asignarIncidencia($id){
         $this->incidenciaId = $id;
         $this->asignaSoporte = true;
-
     }
 
     public function store(){
@@ -98,6 +97,7 @@ class GestionIncidencias extends Component
         }
         session()->flash('message', 'Incidencia creada exitosamente.');
         $this->resetFields();
+        return redirect()->route('dashboard');
     }
 
     public function edit($id){
@@ -108,6 +108,10 @@ class GestionIncidencias extends Component
         $this->estado = $incidencia->estado;
         $this->asignado = $incidencia->asignado;
         session()->flash('message', "Editando incidencia ID: $id");
+
+        $this->isModalOpen = true;
+
+
 
     }
 
@@ -137,6 +141,8 @@ class GestionIncidencias extends Component
         }elseif($user->role === 'administrador'){
             $this->incidencias = Incidencia::all();
         }
+
+        return redirect()->route('dashboard');
     }
 
     public function delete($id){
@@ -149,6 +155,7 @@ class GestionIncidencias extends Component
         }elseif($user->role === 'administrador'){
             $this->incidencias = Incidencia::all();
         }
+        return redirect()->route('dashboard');
     }
 
     public function actualizaEstado(){
@@ -159,6 +166,7 @@ class GestionIncidencias extends Component
         session()->flash('message', 'Estado de la incidencia actualizado');
         $this->changeStatus = false;
         $this->mount();
+        return redirect()->route('dashboard');
     }
 
     public function asignarSoporte(){
@@ -180,5 +188,6 @@ class GestionIncidencias extends Component
             $this->incidencias = Incidencia::all();
         }
         $this->resetFields();
+        return redirect()->route('dashboard');
     }
 }

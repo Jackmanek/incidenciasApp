@@ -1,4 +1,4 @@
-<div x-data="{ isCreateModalOpen: false, isModalOpen: false, changeSatusModal: false, asignaModal: false }"  class="w-full m-auto mb-4">
+<div x-data="{ isCreateModalOpen: false, isModalOpen:  false, changeSatusModal: false, asignaModal: false }"  class="w-full m-auto mb-4">
     <div class="relative flex flex-col w-5/6 h-full  text-gray-700 bg-white shadow-md rounded-xl bg-clip-border m-auto">
         <div class=" flex justify-center rounded bg-slate-200 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-6xl dark:text-white">
             <h3 class="mr-3">Listado de Incidencias</h3>
@@ -68,7 +68,7 @@
                 <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4"  readonly />
                 <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4"  readonly></textarea>
             @elseif (Auth::user()->role === 'administrador')
-                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4"  />
+                <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" />
                 <textarea wire:model="descripcion" class="w-full px-4 py-2 border rounded mb-4" ></textarea>
             @else
                 <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded mb-4" />
