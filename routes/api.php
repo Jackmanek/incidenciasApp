@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthApiControllerr;
+use App\Http\Controllers\IncidenciaApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +18,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::post('register',[AuthApiControllerr::class, 'register']);
+Route::post('login',[AuthApiControllerr::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function(){
+    Route::get('logout', [AuthApiControllerr::class, 'logout']);
+    Route::get('incidencias',[IncidenciaApiController::class,'listIncidencias']);
 });
