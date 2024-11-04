@@ -171,15 +171,16 @@ class GestionIncidencias extends Component
 
     public function asignarSoporte(){
         $incidencia = Incidencia::findOrFail($this->incidenciaId);
+        //dd($this->asignado);
 
-
-        if($this->asignado === 'no_asignado'){
+        if($this->asignado === ''){
             $incidencia->asignado_a()->dissociate();
         }else{
             $incidencia->asignado_a()->associate($this->asignado);
-        }
 
+        }
         $incidencia->save();
+
         session()->flash('message', 'Soporte asignado exitosamente.');
         $user = Auth::user();
         if ($user->role === 'soporte') {
