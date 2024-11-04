@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-
     <div class="w-full">
         <div class="w-2/3 m-auto">
             <h1 class="rounded bg-slate-100 text-center mt-2 mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-white">Gestor <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Web</span> de Incidencia</h1>

@@ -110,9 +110,6 @@ class GestionIncidencias extends Component
         session()->flash('message', "Editando incidencia ID: $id");
 
         $this->isModalOpen = true;
-
-
-
     }
 
     public function update(){
