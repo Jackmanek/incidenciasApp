@@ -4,7 +4,7 @@
             <h3 class="mr-3">Listado de Incidencias</h3>
 
             <button class="mt-2 bg-black text-white relative h-10 max-h-[40px] w-100 max-w-[150px] py-3 px-3 select-none rounded-lg text-center align-middle  text-xs  uppercase transition-all hover:bg-green-700"
-            @click="isCreateModalOpen = true; @this.createNewIncidencia()">Nueva Incidencia</button>
+            wire:click="createNewIncidencia()" @click="isCreateModalOpen = true">Nueva Incidencia</button>
 
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
