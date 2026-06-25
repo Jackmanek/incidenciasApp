@@ -4,7 +4,7 @@
             <h3 class="mr-3">Listado de Incidencias</h3>
 
             <button class="mt-2 bg-black text-white relative h-10 max-h-[40px] w-100 max-w-[150px] py-3 px-3 select-none rounded-lg text-center align-middle  text-xs  uppercase transition-all hover:bg-green-700"
-            wire:click="createNewIncidencia()" @click="isCreateModalOpen = true">Nueva Incidencia</button>
+            @click="isCreateModalOpen = true; $wire.createNewIncidencia()">Nueva Incidencia</button>
 
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -23,11 +23,11 @@
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->title }}</td>
                         <td class="p-4 border-b border-blue-gray-50">{{ $incidencia->descripcion }}</td>
                         <td class="p-4 border-b border-blue-gray-50"><button class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                            @click="changeSatusModal = true; @this.cambioEstado({{ $incidencia->id }})">{{ $incidencia->estado }}</button></td>
+                            @click="changeSatusModal = true; $wire.cambioEstado({{ $incidencia->id }})">{{ $incidencia->estado }}</button></td>
                         <td class="p-4 border-b border-blue-gray-50">
                             @if (Auth::user()->role === 'administrador')
                                 <button class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                @click="asignaModal = true; @this.asignarIncidencia({{ $incidencia->id }})">{{ $incidencia->asignado_a->name ?? 'No asignado' }}</button>
+                                @click="asignaModal = true; $wire.asignarIncidencia({{ $incidencia->id }})">{{ $incidencia->asignado_a->name ?? 'No asignado' }}</button>
                             @else
                                 {{ $incidencia->asignado_a->name ?? 'No asignado' }}
                             @endif
@@ -35,7 +35,7 @@
                         </td>
                         <td class="p-4 border-b border-blue-gray-50">
                             <button class="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            @click="isModalOpen = true; @this.edit({{ $incidencia->id }})">
+                            @click="isModalOpen = true; $wire.edit({{ $incidencia->id }})">
                                 <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
                                       class="w-4 h-4">

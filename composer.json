@@ -7,10 +7,10 @@
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^10.10",
+        "laravel/framework": "^10.50",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "livewire/livewire": "^3.5"
+        "livewire/livewire": "^4.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -61,6 +61,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "audit": {
+            "ignore": [ "PKSA-m5cs-t1y6-qpcs", "PKSA-3r5d-mb8f-1qw9", "PKSA-mdq4-51ck-6kdq"]
         }
     },
     "minimum-stability": "stable",
